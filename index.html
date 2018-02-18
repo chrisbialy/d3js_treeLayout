@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    
+    <meta charset="utf-8">
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>D3.js tutorial - 15 - The Tree Layout (2/2)</title>
+
+  
+
+    <!-- D3.js CDN source -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	</head>
+
+  <body>
+  
+		<script>
+		
+		var canvas = d3.select("body").append("svg")
+			.attr("width", 500)
+			.attr("height", 500)
+			.append("g")
+			.attr("transform", "translate(50, 50)");
+			
+		// creatig tree layout	
+		
+		var tree = d3.layout.tree()
+			.size([400, 400]);
+			
+		d3.json("mydata.json", function (data) {
+		
+			var nodes = tree.nodes(data);
+			
+			// the links between the nodes are stored in links variable
+			// containing an array of objects with their source and target attributes
+			var links = tree.links(nodes);
+			
+			var node = canvas.selectAll(".node")
+				.data(nodes)
+				.enter()
+				.append("g")
+					.attr("class", "node")		
+					// swap to + d.x + "," + d.y + ")" }) for vertical positon
+					.attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")" })
+					
+				node.append("circle")
+					.attr("r", 5)
+					.attr("fill", "steelblue");
+					
+				node.append("text")
+					.text(function (d) { return d.name; })
+		
+			// adding paths connecting all the nodes 
+			
+			var diagonal = d3.svg.diagonal()
+				// swap to { return [d.x, d.y]; }); for vertical positon
+				.projection(function (d) { return [d.y, d.x]; });
+			
+			canvas.selectAll(".link")
+				.data(links)
+				.enter()
+				.append("path")
+				.attr("class", "link")
+				.attr("fill", "none")
+				.attr("stroke", "#3762ff")
+				.attr("d", diagonal);
+		
+		});
+		
+		
+		</script>
+  
+  
+  
+  </body>
+  </html>
+  
